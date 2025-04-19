@@ -11,13 +11,13 @@ module "testvm" {
   zone                       = var.vm_zone
   encryption_at_host_enabled = false
 
-account_credentials = {
-  admin_credentials = {
-    username                          = "azureuser"
-    password                          = var.admin_password
-    generate_admin_password_or_ssh_key = false
+  account_credentials = {
+    admin_credentials = {
+      username                           = "azureuser"
+      password                           = var.admin_password
+      generate_admin_password_or_ssh_key = false
+    }
   }
-}
 
 
   os_disk = {
@@ -37,9 +37,9 @@ account_credentials = {
       name = "${module.naming.network_interface.name_unique}"
       ip_configurations = {
         ip_configurations_1 = {
-          name                               = "${module.naming.network_interface.name_unique}-ipconfig"
-          private_ip_subnet_resource_id      = "${module.vnet_test.subnets.vm_subnet_1.resource_id}"
-          public_ip_address_resource_id      = "${module.pip-testvm.resource_id}"
+          name                          = "${module.naming.network_interface.name_unique}-ipconfig"
+          private_ip_subnet_resource_id = "${module.vnet_test.subnets.vm_subnet_1.resource_id}"
+          public_ip_address_resource_id = "${module.pip-testvm.resource_id}"
         }
       }
     }
