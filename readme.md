@@ -1,3 +1,3 @@
-# Terraform Azure Infrastructure
+# Terraform Azure Test Environment
 
-Rewrite the Azure infrastructure using Azure Verified Modules in Terraform.
+Rewriting using Azure Verified Modules
