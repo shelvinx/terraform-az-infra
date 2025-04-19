@@ -9,16 +9,14 @@ terraform {
       source  = "hashicorp/random"
       version = "~> 3.7.1" # Required for the naming module
     }
-}
+  }
 
-  cloud { 
-    
-    organization = "az-env" 
-
-    workspaces { 
-      name = "Terraform-Azure-VM" 
-    } 
-  } 
+  cloud {
+    organization = "az-env"
+    workspaces {
+      name = "Terraform-Azure-VM"
+    }
+  }
 }
 
 # Configure the Azure Provider
