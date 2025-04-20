@@ -25,7 +25,7 @@ module "nsg_test" {
   resource_group_name = module.resource_group.name
   name                = module.naming.network_security_group.name_unique
 
-  security_rules = local.nsg_rules
+  security_rules = local.nsg_rules # Defined in locals.tf
 }
 
 module "pip-testvm" {

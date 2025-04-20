@@ -48,4 +48,22 @@ module "testvm" {
   priority        = var.priority
   max_bid_price   = var.spot_max_price
   eviction_policy = var.eviction_policy
+
+  extensions = {
+    script = {
+      name                       = "ConfigurationScript"
+      publisher                  = "Microsoft.Compute"
+      type                       = "CustomScriptExtension"
+      type_handler_version       = "1.10"
+      auto_upgrade_minor_version = true
+      settings = <<SETTINGS
+      {
+        "fileUris": [
+          "https://raw.githubusercontent.com/shelvinx/terraform-az-infra/refs/heads/main/scripts/vm-config.ps1"
+        ],
+        "commandToExecute": "powershell -ExecutionPolicy Unrestricted -File vm-config.ps1"
+      }
+      SETTINGS
+    }
+  }
 }
