@@ -4,20 +4,20 @@ Get-NetConnectionProfile |
   Where-Object NetworkCategory -Eq 'Public' |
   ForEach-Object {
     Set-NetConnectionProfile -InterfaceIndex $_.InterfaceIndex -NetworkCategory Private
-    Write-Host "Changed network profile on interface '$($_.InterfaceAlias)' to Private."
+    Write-Output "Changed network profile on interface '$($_.InterfaceAlias)' to Private."
   }
 }
 catch {
-    Write-Host "Failed to change network profile:" $_.Exception.Message
+    Write-Error "Failed to change network profile:" $_.Exception.Message
 }
 
 # Enable PS Remoting with simple error handling
 try {
     Enable-PSRemoting -Force -ErrorAction Stop
-    Write-Host "PS Remoting enabled successfully."
+    Write-Output "PS Remoting enabled successfully."
 }
 catch {
-    Write-Host "Failed to enable PS Remoting:" $_.Exception.Message
+    Write-Error "Failed to enable PS Remoting:" $_.Exception.Message
 }
 
 # Create self signed certificate
@@ -30,9 +30,10 @@ $certParams = @{
     Subject           = "CN=$env:COMPUTERNAME"
 }
 $cert = New-SelfSignedCertificate @certParams
+Write-Output "Self-signed certificate created successfully."
 }
 catch {
-    Write-Host "Failed to create self-signed certificate:" $_.Exception.Message
+    Write-Error "Failed to create self-signed certificate:" $_.Exception.Message
 }
 
 # Create HTTPS listener
@@ -49,9 +50,10 @@ $httpsParams = @{
     }
 }
 New-WSManInstance @httpsParams
+Write-Output "HTTPS listener created successfully."
 }
 catch {
-    Write-Host "Failed to create HTTPS listener:" $_.Exception.Message
+    Write-Error "Failed to create HTTPS listener:" $_.Exception.Message
 }
 
 try {
@@ -66,7 +68,8 @@ $firewallParams = @{
     Protocol    = 'TCP'
 }
 New-NetFirewallRule @firewallParams
+Write-Output "Firewall rule for HTTPS listener created successfully."
 }
 catch {
-    Write-Host "Failed to create firewall rule:" $_.Exception.Message
+    Write-Error "Failed to create firewall rule:" $_.Exception.Message
 }
