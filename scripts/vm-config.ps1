@@ -1,4 +1,5 @@
 # Check and switch network profile from Public to Private
+# URL Rename Test
 Get-NetConnectionProfile |
   Where-Object NetworkCategory -Eq 'Public' |
   ForEach-Object {
