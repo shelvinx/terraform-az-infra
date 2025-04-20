@@ -1,8 +1,9 @@
 location = "uksouth"
 
 tags = {
-  "ManagedBy"   = "Terraform",
-  "Environment" = "Test"
+  "deployment"    = "terraform",
+  "configuration" = "ansible",
+  "env"           = "test"
 }
 
 # Naming Moduel Suffixes
