@@ -8,7 +8,7 @@ module "testvm" {
   name                       = module.naming.virtual_machine.name
   os_type                    = var.os_type
   sku_size                   = var.vm_sku_size
-  zone                       = var.vm_zone
+  zone                       = local.zone_number
   encryption_at_host_enabled = false
 
   account_credentials = {

@@ -36,3 +36,7 @@ locals {
     }
   }
 }
+
+locals {
+  zone_number = random_integer.random_zone.result
+}

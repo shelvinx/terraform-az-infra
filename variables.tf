@@ -73,11 +73,6 @@ variable "vm_sku_size" {
   }
 }
 
-variable "vm_zone" {
-  description = "Availability zones for the VM"
-  type        = string
-}
-
 variable "priority" {
   description = "Priority for the VM"
   type        = string

@@ -30,3 +30,8 @@ provider "azurerm" {
   }
   resource_provider_registrations = "extended"
 }
+
+resource "random_integer" "random_zone" {
+  min   = 1
+  max   = 3
+}
