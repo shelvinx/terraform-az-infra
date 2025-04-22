@@ -3,12 +3,16 @@ output "resource_group" {
   value       = module.resource_group.name
 }
 
-output "pip_testvm" {
-  description = "Output public ip address"
-  value       = module.pip-testvm.public_ip_address
+output "public_ip_addresses" {
+  description = "Output public IP addresses for all VMs"
+  value       = { for k, v in module.pip : k => v.public_ip_address }
 }
 
-output "virtual_machine_name" {
-  description = "Output virtual machine name"
-  value       = module.testvm.name
+output "virtual_machine_names" {
+  description = "Output VM names for all instances"
+  value       = { for k, v in module.testvm : k => v.name }
+}
+
+output "calculated_vm_instances" {
+  value = local.vm_instances
 }

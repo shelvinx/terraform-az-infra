@@ -8,13 +8,15 @@ module "vnet_test" {
 
   subnets = {
     vm_subnet_1 = {
-      name             = "${module.naming.subnet.name_unique}"
+      name             = "${module.naming.subnet.name}"
       address_prefixes = "${var.vm_subnet_1_address_prefix}"
       network_security_group = {
         id = "${module.nsg_test.resource_id}"
       }
     }
   }
+
+  tags = var.tags
 }
 
 module "nsg_test" {
@@ -23,16 +25,21 @@ module "nsg_test" {
 
   location            = var.location
   resource_group_name = module.resource_group.name
-  name                = module.naming.network_security_group.name_unique
+  name                = module.naming.network_security_group.name
 
   security_rules = local.nsg_rules # Defined in locals.tf
+
+  tags = var.tags
 }
 
-module "pip-testvm" {
+module "pip" {
+  for_each = toset(local.vm_instances)
   source  = "Azure/avm-res-network-publicipaddress/azurerm"
   version = "0.2.0"
 
   location            = var.location
   resource_group_name = module.resource_group.name
-  name                = module.naming.public_ip.name_unique
+  name                = "${module.naming.public_ip.name}-${each.key}"
+
+  tags = var.tags
 }
