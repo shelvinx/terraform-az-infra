@@ -1,13 +1,13 @@
 # Terraform Azure Test Environment
 
-Written using Azure Verified Modules / Well-Architected Framework 
+## Overview
+Built with [Azure Verified Modules](https://registry.terraform.io/namespaces/Azure) as it aligns with the Well-Architected Framework.
 
-State stored remotely using TF Cloud which is compatible with Github Actions.
+## Notes
+- **Remote State:** State is stored remotely using Terraform Cloud, compatible with GitHub Actions.
+- **Configuration Management:** VM Extension runs `vm-config.ps1` to enable WinRM for Ansible configuration management.
+- **CAF Naming:** Utilizes the `naming` module for Cloud Adoption Framework naming conventions.
+- **Scaling:** Adjust `vm_count` in `terraform.tfvars` to control the number of Windows VMs.
+- **Spot VM Considerations:** Spot pricing may limit zone allocation; setting `zone = null` improves deployment success, otherwise Azure runs into Allocation failures breaking the deployment.
 
-Multiple instances can be created by modifying the `vm_count` variable
-
-Availability Zone set to `Null` due to Azure allocation issues; possibly related with using Spot pricing.
-
-VM Extension runs `vm-config.ps1` to enable WinRM for Ansible Configuration Management.
-
-Utilizes the `naming` module for Cloud Adoption Framework naming conventions.
+---
