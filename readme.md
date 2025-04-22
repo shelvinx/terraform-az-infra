@@ -13,3 +13,7 @@ Built with [Azure Verified Modules](https://registry.terraform.io/namespaces/Azu
 The `zone_number` locals can be used to assign a random Availability Zone to the VMs.
 
 ---
+
+ENVIRONMENT VARIABLES:
+ADMIN_PASSWORD
+AZURE_SUBSCRIPTION_ID
