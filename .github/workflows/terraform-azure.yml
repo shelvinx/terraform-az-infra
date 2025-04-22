@@ -19,7 +19,16 @@ jobs:
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.11.4
-
+      
+      - name: Debug secrets availability
+        run: |
+          echo "Checking if AZURE_CREDENTIALS is set..."
+          if [ -z "${{ secrets.AZURE_CREDENTIALS }}" ]; then
+            echo "❌ AZURE_CREDENTIALS is EMPTY or not accessible!"
+          else
+            echo "✅ AZURE_CREDENTIALS is present."
+            
+        
       - name: Azure Login
         uses: azure/login@v2
         with:
