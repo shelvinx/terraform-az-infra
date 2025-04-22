@@ -7,7 +7,7 @@ tags = {
 }
 
 # Naming Moduel Suffixes
-workload_suffix = "webapp"
+workload_suffix = "tf"
 env_suffix      = "test"
 
 # Network Variables
