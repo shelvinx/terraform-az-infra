@@ -8,6 +8,11 @@ jobs:
     name: Terraform Plan
     runs-on: ubuntu-latest
     environment: Azure
+    env:
+      TF_VAR_admin_password: ${{ secrets.ADMIN_PASSWORD }}
+      ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
     permissions:
       contents: read
       id-token: write
@@ -33,9 +38,7 @@ jobs:
 
       - name: Terraform Plan
         run: terraform plan -out=tfplan
-        env:
-          TF_VAR_admin_password: ${{ secrets.ADMIN_PASSWORD }}
-          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
 
       - name: Upload Terraform Plan
         uses: actions/upload-artifact@v4
