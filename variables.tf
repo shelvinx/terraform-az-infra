@@ -97,3 +97,9 @@ variable "eviction_policy" {
     error_message = "The eviction policy must be either 'Deallocate' or 'Delete'."
   }
 }
+
+variable "vm_count" {
+  description = "Number of VM instances to create."
+  type        = number
+  default     = 1
+}

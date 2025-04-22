@@ -10,5 +10,6 @@ module "resource_group" {
 
   name     = module.naming.resource_group.name
   location = var.location
+  
   tags     = var.tags
 }

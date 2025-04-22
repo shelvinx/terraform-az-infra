@@ -1,7 +1,7 @@
 # NSG Rules
 locals {
   nsg_rules = {
-    "allowrdp" = {
+    allow_rdp = {
       name                       = "AllowRDP"
       access                     = "Allow"
       destination_address_prefix = "*"
@@ -12,7 +12,7 @@ locals {
       source_address_prefix      = "*"
       source_port_range          = "*"
     }
-    "allowicmp" = {
+    allow_icmp = {
       name                       = "AllowICMP"
       access                     = "Allow"
       destination_address_prefix = "*"
@@ -23,7 +23,7 @@ locals {
       source_address_prefix      = "*"
       source_port_range          = "*"
     }
-    "allowwinrm" = {
+    allow_winrm = {
       name                       = "AllowWinRM"
       access                     = "Allow"
       destination_address_prefix = "*"
@@ -37,6 +37,12 @@ locals {
   }
 }
 
+# Random Integer for Zone
 locals {
   zone_number = random_integer.random_zone.result
+}
+
+# Number of VM instances to be created
+locals {
+  vm_instances = [for i in range(var.vm_count) : "vm${i + 1}"]
 }
