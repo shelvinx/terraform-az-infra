@@ -1,7 +1,7 @@
 name: Terraform Azure
 
 on:
-  workflow_dispatch:
+  push:
 
 jobs:
   terraform-plan:
@@ -19,7 +19,8 @@ jobs:
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.11.4
-        
+          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+      
       - name: Azure Login
         uses: azure/login@v2
         with:
@@ -29,8 +30,6 @@ jobs:
 
       - name: Terraform Init
         run: terraform init
-        env:
-          TF_API_TOKEN: ${{ secrets.TF_API_TOKEN }}
 
       - name: Terraform Plan
         run: terraform plan -out=tfplan
