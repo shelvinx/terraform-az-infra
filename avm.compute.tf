@@ -22,7 +22,7 @@ module "testvm" {
 
 
   os_disk = {
-    name                 = "${module.naming.virtual_machine.name}-${each.key}-osdisk"
+    name                 = "${module.naming.managed_disk.name}-${each.key}-osdisk"
     caching              = "ReadWrite"
     storage_account_type = "StandardSSD_LRS"
   }

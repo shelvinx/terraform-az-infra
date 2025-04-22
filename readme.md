@@ -10,4 +10,6 @@ Built with [Azure Verified Modules](https://registry.terraform.io/namespaces/Azu
 - **Scaling:** Adjust `vm_count` in `terraform.tfvars` to control the number of Windows VMs.
 - **Spot VM Considerations:** Spot pricing may limit zone allocation; setting `zone = null` improves deployment success, otherwise Azure runs into Allocation failures breaking the deployment.
 
+The `zone_number` locals can be used to assign a random Availability Zone to the VMs.
+
 ---

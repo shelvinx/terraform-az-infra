@@ -8,7 +8,7 @@ module "vnet_test" {
 
   subnets = {
     vm_subnet_1 = {
-      name             = "${module.naming.subnet.name_unique}"
+      name             = "${module.naming.subnet.name}"
       address_prefixes = "${var.vm_subnet_1_address_prefix}"
       network_security_group = {
         id = "${module.nsg_test.resource_id}"
