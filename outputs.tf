@@ -5,14 +5,24 @@ output "resource_group" {
 
 output "public_ip_addresses" {
   description = "Output public IP addresses for all VMs"
-  value       = { for k, v in module.pip : k => v.public_ip_address }
+  value = merge(
+    { for k, v in module.pip_windows : k => v.public_ip_address },
+    { for k, v in module.pip_linux : k => v.public_ip_address }
+  )
 }
 
 output "virtual_machine_names" {
   description = "Output VM names for all instances"
-  value       = { for k, v in module.testvm : k => v.name }
+  value = merge(
+    { for k, v in module.windows_vm : k => v.name },
+    { for k, v in module.linux_vm : k => v.name }
+  )
 }
 
 output "calculated_vm_instances" {
-  value = local.vm_instances
+  description = "Calculated VM instances for both Windows and Linux VMs"
+  value = {
+    windows = local.windows_vm_instances
+    linux   = local.linux_vm_instances
+  }
 }
