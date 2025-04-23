@@ -74,19 +74,46 @@ catch {
     Write-Error "Failed to create firewall rule:" $_.Exception.Message
 }
 
-# Registry modifications to suppress Server Manager popups
-try {
-    Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\ServerManager" -Name "DoNotPopWACConsoleAtSMLaunch" -Value 1 -Type DWord
-    Write-Output "Set DoNotPopWACConsoleAtSMLaunch registry key successfully."
-}
-catch {
-    Write-Error "Failed to set DoNotPopWACConsoleAtSMLaunch registry key:" $_.Exception.Message
+# Function for registry modifications
+function Set-RegistryDword {
+    param (
+        [string]$Path,
+        [string]$Name,
+        [int]$Value
+    )
+    try {
+        if (-not (Test-Path $Path)) {
+            New-Item -Path $Path -Force | Out-Null
+        }
+        Set-ItemProperty -Path $Path -Name $Name -Value $Value -Type DWord
+        Write-Output "Set $Name in $Path successfully."
+    }
+    catch {
+        Write-Error "Failed to set $Name in $Path: $_.Exception.Message"
+    }
 }
 
-try {
-    Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\ServerManager" -Name "DoNotOpenServerManagerAtLogon" -Value 1 -Type DWord
-    Write-Output "Set DoNotOpenServerManagerAtLogon registry key successfully."
-}
-catch {
-    Write-Error "Failed to set DoNotOpenServerManagerAtLogon registry key:" $_.Exception.Message
+
+# Registry modifications (looped for maintainability)
+$registrySettings = @(
+    @{
+        Path  = "HKLM:\SOFTWARE\Microsoft\ServerManager"
+        Name  = "DoNotPopWACConsoleAtSMLaunch"
+        Value = 1
+    },
+    @{
+        Path  = "HKLM:\SOFTWARE\Microsoft\ServerManager"
+        Name  = "DoNotOpenServerManagerAtLogon"
+        Value = 1
+    },
+    @{
+        Path  = "HKLM:\SYSTEM\CurrentControlSet\Control\Network"
+        Name  = "NewNetworkWindowOff"
+        Value = 1
+    }
+)
+
+
+foreach ($setting in $registrySettings) {
+    Set-RegistryDword -Path $setting.Path -Name $setting.Name -Value $setting.Value
 }
