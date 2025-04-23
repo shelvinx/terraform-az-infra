@@ -53,24 +53,14 @@ variable "admin_password" {
   }
 }
 
-variable "os_type" {
-  description = "Operating system type for the VM"
-  type        = string
-
-  validation {
-    condition     = contains(["Linux", "Windows"], var.os_type)
-    error_message = "The OS type must be either 'Linux' or 'Windows'."
-  }
-}
-
-variable "vm_sku_size" {
+variable "windows_vm_sku_size" {
   description = "SKU size for the VM"
   type        = string
+}
 
-  validation {
-    condition     = length(var.vm_sku_size) > 0
-    error_message = "The VM SKU size cannot be empty."
-  }
+variable "linux_vm_sku_size" {
+  description = "SKU size for Linux VMs."
+  type        = string
 }
 
 variable "priority" {
@@ -98,8 +88,16 @@ variable "eviction_policy" {
   }
 }
 
-variable "vm_count" {
-  description = "Number of VM instances to create."
+variable "windows_vm_count" {
+  description = "Number of Windows VM instances to create."
   type        = number
   default     = 1
 }
+
+variable "linux_vm_count" {
+  description = "Number of Linux VM instances to create."
+  type        = number
+  default     = 1
+}
+
+

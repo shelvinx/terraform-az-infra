@@ -1,7 +1,7 @@
 # NSG Rules
 locals {
   nsg_rules = {
-    allow_rdp = {
+    "allowrdp" = {
       name                       = "AllowRDP"
       access                     = "Allow"
       destination_address_prefix = "*"
@@ -12,7 +12,7 @@ locals {
       source_address_prefix      = "*"
       source_port_range          = "*"
     }
-    allow_icmp = {
+    "allowicmp" = {
       name                       = "AllowICMP"
       access                     = "Allow"
       destination_address_prefix = "*"
@@ -23,13 +23,24 @@ locals {
       source_address_prefix      = "*"
       source_port_range          = "*"
     }
-    allow_winrm = {
+    "allowwinrm" = {
       name                       = "AllowWinRM"
       access                     = "Allow"
       destination_address_prefix = "*"
       destination_port_range     = "5985-5986"
       direction                  = "Inbound"
       priority                   = 1002
+      protocol                   = "Tcp"
+      source_address_prefix      = "*"
+      source_port_range          = "*"
+    }
+    "allowssh" = {
+      name                       = "AllowSSH"
+      access                     = "Allow"
+      destination_address_prefix = "*"
+      destination_port_range     = "22"
+      direction                  = "Inbound"
+      priority                   = 1003
       protocol                   = "Tcp"
       source_address_prefix      = "*"
       source_port_range          = "*"
@@ -44,5 +55,6 @@ locals {
 
 # Number of VM instances to be created
 locals {
-  vm_instances = [for i in range(var.vm_count) : "vm${i + 1}"]
+  windows_vm_instances = [for i in range(var.windows_vm_count) : "win${i + 1}"]
+  linux_vm_instances   = [for i in range(var.linux_vm_count) : "lin${i + 1}"]
 }

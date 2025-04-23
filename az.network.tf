@@ -32,14 +32,26 @@ module "nsg_test" {
   tags = var.tags
 }
 
-module "pip" {
-  for_each = toset(local.vm_instances)
+module "pip_windows" {
+  for_each = toset(local.windows_vm_instances)
   source  = "Azure/avm-res-network-publicipaddress/azurerm"
   version = "0.2.0"
 
   location            = var.location
   resource_group_name = module.resource_group.name
   name                = "${module.naming.public_ip.name}-${each.key}"
+
+  tags = var.tags
+}
+
+module "pip_linux" {
+  for_each = toset(local.linux_vm_instances)
+  source  = "Azure/avm-res-network-publicipaddress/azurerm"
+  version = "0.2.0"
+
+  location            = var.location
+  resource_group_name = module.resource_group.name
+  name                = "${module.naming.public_ip.name}-linux-${each.key}"
 
   tags = var.tags
 }

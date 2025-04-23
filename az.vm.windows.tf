@@ -1,14 +1,14 @@
 # AVM Virtual Machine
-module "testvm" {
-  for_each = toset(local.vm_instances)
+module "windows_vm" {
+  for_each = toset(local.windows_vm_instances)
   source  = "Azure/avm-res-compute-virtualmachine/azurerm"
   version = "0.19.0"
 
   location                   = var.location
   resource_group_name        = module.resource_group.name
   name                       = "${module.naming.virtual_machine.name}-${each.key}"
-  os_type                    = var.os_type
-  sku_size                   = var.vm_sku_size
+  os_type                    = "Windows"
+  sku_size                   = var.windows_vm_sku_size
   zone                       = null
   encryption_at_host_enabled = false
 
@@ -41,7 +41,7 @@ module "testvm" {
         ip_configurations_1 = {
           name                          = "ipconfig-${each.key}"
           private_ip_subnet_resource_id = module.vnet_test.subnets.vm_subnet_1.resource_id
-          public_ip_address_resource_id = module.pip[each.key].resource_id
+          public_ip_address_resource_id = module.pip_windows[each.key].resource_id
         }
       }
     }
