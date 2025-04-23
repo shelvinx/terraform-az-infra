@@ -73,3 +73,20 @@ Write-Output "Firewall rule for HTTPS listener created successfully."
 catch {
     Write-Error "Failed to create firewall rule:" $_.Exception.Message
 }
+
+# Registry modifications to suppress Server Manager popups
+try {
+    Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\ServerManager" -Name "DoNotPopWACConsoleAtSMLaunch" -Value 1 -Type DWord
+    Write-Output "Set DoNotPopWACConsoleAtSMLaunch registry key successfully."
+}
+catch {
+    Write-Error "Failed to set DoNotPopWACConsoleAtSMLaunch registry key:" $_.Exception.Message
+}
+
+try {
+    Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\ServerManager" -Name "DoNotOpenServerManagerAtLogon" -Value 1 -Type DWord
+    Write-Output "Set DoNotOpenServerManagerAtLogon registry key successfully."
+}
+catch {
+    Write-Error "Failed to set DoNotOpenServerManagerAtLogon registry key:" $_.Exception.Message
+}
