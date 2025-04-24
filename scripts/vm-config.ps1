@@ -89,10 +89,9 @@ function Set-RegistryDword {
         Write-Output "Set $Name in $Path successfully."
     }
     catch {
-        Write-Error "Failed to set $Name in $Path: $_.Exception.Message"
+        Write-Error "Failed to set $Name in $Path : $($_.Exception.Message)"
     }
 }
-
 
 # Registry modifications (looped for maintainability)
 $registrySettings = @(
