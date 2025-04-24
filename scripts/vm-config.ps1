@@ -86,10 +86,10 @@ function Set-RegistryDword {
             New-Item -Path $Path -Force | Out-Null
         }
         Set-ItemProperty -Path $Path -Name $Name -Value $Value -Type DWord
-        Write-Output "Set $($Name) in $($Path) successfully."
+        Write-Output "Set $Name in $Path successfully."
     }
     catch {
-        Write-Error "Failed to set $($Name) in $($Path) : $($_.Exception.Message)"
+        Write-Error "Failed to set $Name in $Path : $($_.Exception.Message)"
     }
 }
 
