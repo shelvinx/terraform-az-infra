@@ -40,6 +40,7 @@ module "pip_windows" {
   location            = var.location
   resource_group_name = module.resource_group.name
   name                = "${module.naming.public_ip.name}-${each.key}"
+  domain_name_label   = "${module.naming.virtual_machine.name}-${each.key}"
 
   tags = var.tags
 }
@@ -52,6 +53,7 @@ module "pip_linux" {
   location            = var.location
   resource_group_name = module.resource_group.name
   name                = "${module.naming.public_ip.name}-linux-${each.key}"
+  domain_name_label   = "${module.naming.virtual_machine.name}-linux-${each.key}"
 
   tags = var.tags
 }
