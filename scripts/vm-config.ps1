@@ -134,3 +134,12 @@ $registrySettings = @(
 foreach ($setting in $registrySettings) {
     Set-RegistryDword -Path $setting.Path -Name $setting.Name -Value $setting.Value
 }
+
+# Install Chocolatey
+try {
+    Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+    Write-Output "Chocolatey installed successfully."
+}
+catch {
+    Write-Error "Failed to install Chocolatey: $($_.Exception.Message)"
+}
