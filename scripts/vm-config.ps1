@@ -74,6 +74,24 @@ catch {
     Write-Error "Failed to create firewall rule:" $_.Exception.Message
 }
 
+try {
+# Enable HTTP traffic on port 80
+$firewallParamsHttp = @{
+    Action      = 'Allow'
+    Description = 'Inbound rule for HTTP traffic. [TCP 80]'
+    Direction   = 'Inbound'
+    DisplayName = 'HTTP (TCP 80)'
+    LocalPort   = 80
+    Profile     = 'Any'
+    Protocol    = 'TCP'
+}
+New-NetFirewallRule @firewallParamsHttp
+Write-Output "Firewall rule for HTTP (port 80) created successfully."
+}
+catch {
+    Write-Error "Failed to create HTTP firewall rule:" $_.Exception.Message
+}
+
 # Function for registry modifications
 function Set-RegistryDword {
     param (
@@ -115,4 +133,13 @@ $registrySettings = @(
 
 foreach ($setting in $registrySettings) {
     Set-RegistryDword -Path $setting.Path -Name $setting.Name -Value $setting.Value
+}
+
+# Install Chocolatey
+try {
+    Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+    Write-Output "Chocolatey installed successfully."
+}
+catch {
+    Write-Error "Failed to install Chocolatey: $($_.Exception.Message)"
 }

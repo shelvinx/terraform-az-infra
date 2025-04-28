@@ -26,3 +26,11 @@ output "calculated_vm_instances" {
     linux   = local.linux_vm_instances
   }
 }
+
+output "windows_vm_fqdns" {
+  description = "FQDN URLs for Windows VMs (https://<domain_name_label>.cloudapp.azure.com)"
+  value = merge(
+    { for k, v in module.pip_windows : k => "${module.naming.virtual_machine.name}-${k}.${var.location}.cloudapp.azure.com" },
+    { for k, v in module.pip_linux : k => "${module.naming.virtual_machine.name}-linux-${k}.${var.location}.cloudapp.azure.com" }
+  )
+}

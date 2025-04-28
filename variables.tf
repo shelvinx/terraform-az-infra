@@ -1,3 +1,15 @@
+variable "HCP_CLIENT_ID" {
+  description = "HCP Client ID"
+  type        = string
+  sensitive   = true
+}
+
+variable "HCP_CLIENT_SECRET" {
+  description = "HCP Client Secret"
+  type        = string
+  sensitive   = true
+}
+
 variable "location" {
   description = "Location for resources"
   type        = string
