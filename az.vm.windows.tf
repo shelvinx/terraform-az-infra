@@ -47,6 +47,10 @@ module "windows_vm" {
     }
   }
 
+  managed_identities = {
+    user_assigned_resource_ids = [data.azurerm_user_assigned_identity.uai_tfvm.id]
+  }
+
   priority        = var.priority
   max_bid_price   = var.spot_max_price
   eviction_policy = var.eviction_policy
