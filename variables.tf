@@ -10,6 +10,12 @@ variable "HCP_CLIENT_SECRET" {
   sensitive   = true
 }
 
+variable "key_vault_name" {
+  description = "Key Vault name"
+  type        = string
+  sensitive   = true
+}
+
 variable "location" {
   description = "Location for resources"
   type        = string
@@ -112,4 +118,8 @@ variable "linux_vm_count" {
   default     = 1
 }
 
-
+variable "key_vault_name" {
+  description = "Key Vault name"
+  type        = string
+  default     = "rain"
+}

@@ -71,6 +71,32 @@ module "windows_vm" {
       }
       SETTINGS
     }
+    keyvault = {
+      name                       = "KeyVaultForWindows-${each.key}" # Unique name per VM
+      publisher                  = "Microsoft.Azure.KeyVault"
+      type                       = "KeyVaultForWindows"
+      type_handler_version       = "3.0" # Using a common version
+      auto_upgrade_minor_version = true
+      settings = jsonencode({
+        secretsManagementSettings = {
+          pollingIntervalInS     = "120"
+          certificateStoreName   = "My" # Standard Windows certificate store
+          linkOnRenewal          = false # Set to true if needed
+          certificateStoreLocation = "LocalMachine"
+          observedCertificates = [
+            # Dynamically construct the Key Vault secret URI for the certificate
+            "https://${var.key_vault_name}.vault.azure.net/secrets/${each.key}-cert"
+          ]
+        }
+        # Authentication using the VM's User Assigned Managed Identity
+        authenticationSettings = {
+          msiEndpoint = "http://169.254.169.254/metadata/identity"
+          # Use the client ID of the assigned identity
+          msiClientId = data.azurerm_user_assigned_identity.uai_tfvm.client_id
+        }
+      })
+      # No protected_settings needed when using Managed Identity
+    }
   }
 
   tags = var.tags
