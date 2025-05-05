@@ -1,29 +1,31 @@
 # Terraform Azure Test Environment
 
 ## Overview
-Built with [Azure Verified Modules](https://registry.terraform.io/namespaces/Azure) as it aligns with the Well-Architected Framework.
-
+Built with [Azure Verified Modules](https://registry.terraform.io/namespaces/Azure) as it aligns with the Well-Architected Framework and the `Naming` module which uses CAF naming conventions.
 
 ## Important Environment & Module Notes
 - **VM Computer Name Length:**
-  - Azure restricts Windows VM computer names to 15 characters max. Ensure your naming logic (locals, modules) produces names ≤ 15 chars
+  - Azure restricts Windows VM computer names to 15 characters max. Ensure naming logic (locals, modules) produces names ≤ 15 chars
 
-- **Scaling VMs:**
+- **For_Each Loop for VM Creation**
   - Increase/decrease `windows_vm_count` or `linux_vm_count` in `terraform.tfvars` to scale up/down. Reducing count will destroy the highest-indexed VMs first.
+  - `Locals` will define specific variables. Tags are used in Ansible playbooks. 
+  For example: `role: webserver` will be targetted by the Ansible playbook for installing Web Server.
+
   Use `Apply` to scale
   Use `Destroy` to remove VMs
 
-- **Linux Password Authentication:** TODO: SSH Key Auth
-  - The AVM Linux VM module disables password authentication by default. To enable, set `password_authentication_disabled = false` in the `admin_credentials` block.
-  - Default username: `azureuser`
+  *Scale Sets should be used for identical VMs.*
+
+- **VM Extensions**
+  - Script Extension - configures firewall rules for Ansible.
+  - KeyVault Extension - [Windows] Retrieves certificate from Key Vault and installs it.
+    KV Permissions are provided with a `User Assigned ID`.
 
 - **Output Merging:**
   - Outputs for VM names and IPs use `merge()` to combine Windows and Linux resources into a single map.
 
 ## ENVIRONMENT VARIABLES
-- `ADMIN_PASSWORD` (required for provisioning VMs)
-- `AZURE_SUBSCRIPTION_ID` (used by Terraform provider)
+- `ADMIN_PASSWORD` (HCP Vault - Set as TF_VAR ENV Variable, this removes the undeclared variable warning.)
 
 ---
-
-For more details, see the module documentation or reach out to the project maintainer.

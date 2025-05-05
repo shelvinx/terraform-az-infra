@@ -1,3 +1,61 @@
+# VM instances configuration
+locals {
+  # Define default values for Windows VMs
+  windows_vm_defaults = {
+    sku_size = var.windows_vm_sku_size
+    tags     = var.tags
+    priority = var.priority
+  }
+
+  # Define override values for Windows VMs
+  windows_vm_configs = {
+    ws1 = {
+      vm_name  = "ws1"
+    #  sku_size = "Standard_D2s_v3"  # Override default SKU
+      tags     = merge(var.tags, {
+        role = "webserver"
+      })
+    }
+    # Add more VMs with custom configurations as needed
+  }
+
+  # Merge defaults with specific configurations, selecting based on count
+  windows_vm_instances = { for name in slice(sort(keys(local.windows_vm_configs)), 0, var.windows_vm_count) :
+    name => merge(local.windows_vm_defaults, local.windows_vm_configs[name])
+  }
+
+  # Define default values for Linux VMs
+  linux_vm_defaults = {
+    sku_size = var.linux_vm_sku_size
+    tags     = var.tags
+    priority = var.priority
+  }
+
+  # Define override values for Linux VMs
+  linux_vm_configs = {
+    lnx1 = {
+      vm_name  = "lnx1"
+    #  sku_size = "Standard_D2s_v3"  # Override default SKU
+      tags     = merge(var.tags, {
+        role = "webserver"
+      })
+    }
+    # Add more VMs with custom configurations as needed
+    lnx2 = {
+      vm_name  = "lnx2"
+    #  sku_size = "Standard_D2s_v3"  # Override default SKU
+      tags     = merge(var.tags, {
+        role = "database"
+      })
+    }
+  }
+
+  # Merge defaults with specific configurations, selecting based on count
+  linux_vm_instances = { for name in slice(sort(keys(local.linux_vm_configs)), 0, var.linux_vm_count) :
+    name => merge(local.linux_vm_defaults, local.linux_vm_configs[name])
+  }
+}
+
 # NSG Rules
 locals {
   nsg_rules = {
@@ -62,10 +120,4 @@ locals {
 # Random Integer for Zone
 locals {
   zone_number = random_integer.random_zone.result
-}
-
-# Number of VM instances to be created
-locals {
-  windows_vm_instances = [for i in range(var.windows_vm_count) : "win${i + 1}"]
-  linux_vm_instances   = [for i in range(var.linux_vm_count) : "lin${i + 1}"]
 }

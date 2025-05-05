@@ -58,17 +58,7 @@ variable "vm_subnet_1_address_prefix" {
 
 variable "admin_password" {
   type        = string
-  description = "Administrator password"
   sensitive   = true
-
-  validation {
-    condition = (
-      length(var.admin_password) >= 12 &&
-      can(regex("[a-zA-Z0-9]", var.admin_password)) &&
-      can(regex("[\\W_]", var.admin_password))
-    )
-    error_message = "Password must be at least 12 characters and contain both alphanumeric and special characters."
-  }
 }
 
 variable "windows_vm_sku_size" {
@@ -109,17 +99,9 @@ variable "eviction_policy" {
 variable "windows_vm_count" {
   description = "Number of Windows VM instances to create."
   type        = number
-  default     = 1
 }
 
 variable "linux_vm_count" {
   description = "Number of Linux VM instances to create."
   type        = number
-  default     = 1
-}
-
-variable "key_vault_name" {
-  description = "Key Vault name"
-  type        = string
-  default     = "rain"
 }
