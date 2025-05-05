@@ -1,7 +1,7 @@
 # Terraform Azure Test Environment
 
 ## Overview
-Built with [Azure Verified Modules](https://registry.terraform.io/namespaces/Azure) as it aligns with the Well-Architected Framework and the `Naming` module which uses CAF naming conventions.
+Built with [Azure Verified Modules](https://azure.github.io/Azure-Verified-Modules/) as it aligns with the Well-Architected Framework and the `Naming` module which uses CAF naming conventions.
 
 ## Important Environment & Module Notes
 - **VM Computer Name Length:**
