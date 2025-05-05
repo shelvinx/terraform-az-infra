@@ -1,8 +1,3 @@
-output "resource_group" {
-  description = "Output resource group name"
-  value       = module.resource_group.name
-}
-
 output "public_ip_addresses" {
   description = "Output public IP addresses for all VMs"
   value = merge(
@@ -27,10 +22,10 @@ output "calculated_vm_instances" {
   }
 }
 
-output "windows_vm_fqdns" {
-  description = "FQDN URLs for Windows VMs (https://<domain_name_label>.cloudapp.azure.com)"
+output "vm_fqdns" {
+  description = "FQDN URLs for VMs (https://<domain_name_label>.cloudapp.azure.com)"
   value = merge(
     { for k, v in module.pip_windows : k => "${module.naming.virtual_machine.name}-${k}.${var.location}.cloudapp.azure.com" },
-    { for k, v in module.pip_linux : k => "${module.naming.virtual_machine.name}-linux-${k}.${var.location}.cloudapp.azure.com" }
+    { for k, v in module.pip_linux : k => "${module.naming.virtual_machine.name}-${k}.${var.location}.cloudapp.azure.com" }
   )
 }

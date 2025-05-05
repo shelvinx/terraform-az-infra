@@ -16,7 +16,7 @@ terraform {
   cloud {
     organization = "az-env"
     workspaces {
-      name = "Terraform-Azure-VM"
+      name = "az-vm"
     }
   }
 }

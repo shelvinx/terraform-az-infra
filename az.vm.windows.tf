@@ -1,14 +1,14 @@
 # AVM Virtual Machine
 module "windows_vm" {
-  for_each = toset(local.windows_vm_instances)
+  for_each = local.windows_vm_instances
   source  = "Azure/avm-res-compute-virtualmachine/azurerm"
   version = "0.19.0"
 
   location                   = var.location
   resource_group_name        = module.resource_group.name
-  name                       = "${module.naming.virtual_machine.name}-${each.key}"
+  name                       = "${module.naming.virtual_machine.name}-${each.value.vm_name}"
   os_type                    = "Windows"
-  sku_size                   = var.windows_vm_sku_size
+  sku_size                   = each.value.sku_size
   zone                       = null
   encryption_at_host_enabled = false
 
@@ -51,7 +51,7 @@ module "windows_vm" {
     user_assigned_resource_ids = [data.azurerm_user_assigned_identity.uai_tfvm.id]
   }
 
-  priority        = var.priority
+  priority        = each.value.priority
   max_bid_price   = var.spot_max_price
   eviction_policy = var.eviction_policy
 
@@ -79,7 +79,7 @@ module "windows_vm" {
       auto_upgrade_minor_version = true
       settings = jsonencode({
         secretsManagementSettings = {
-          pollingIntervalInS     = "120"
+          pollingIntervalInS     = "60"
           certificateStoreName   = "My" # Standard Windows certificate store
           linkOnRenewal          = false # Set to true if needed
           certificateStoreLocation = "LocalMachine"
@@ -99,5 +99,5 @@ module "windows_vm" {
     }
   }
 
-  tags = var.tags
+  tags = each.value.tags
 }
