@@ -1,4 +1,6 @@
 # VM instances configuration
+# Available Ansible Roles: domaincontroller, webserver
+
 locals {
   # Define default values for Windows VMs
   windows_vm_defaults = {
@@ -9,11 +11,11 @@ locals {
 
   # Define override values for Windows VMs
   windows_vm_configs = {
-    ws1 = {
-      vm_name  = "ws1"
-    #  sku_size = "Standard_D2s_v3"  # Override default SKU
+    hv1 = {
+      vm_name  = "hv1"
+    #  sku_size = "Standard_D4as_v6"  # Override default SKU
       tags     = merge(var.tags, {
-        role = "webserver"
+      role = "n/a"
       })
     }
     # Add more VMs with custom configurations as needed
@@ -45,7 +47,7 @@ locals {
       vm_name  = "lnx2"
     #  sku_size = "Standard_D2s_v3"  # Override default SKU
       tags     = merge(var.tags, {
-        role = "database"
+        role = "n/a"
       })
     }
   }
@@ -110,6 +112,17 @@ locals {
       destination_port_range     = "80"
       direction                  = "Inbound"
       priority                   = 1004
+      protocol                   = "Tcp"
+      source_address_prefix      = "*"
+      source_port_range          = "*"
+    }
+    "allowhttps" = {
+      name                       = "AllowHTTPS"
+      access                     = "Allow"
+      destination_address_prefix = "*"
+      destination_port_range     = "443"
+      direction                  = "Inbound"
+      priority                   = 1005
       protocol                   = "Tcp"
       source_address_prefix      = "*"
       source_port_range          = "*"
