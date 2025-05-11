@@ -47,7 +47,7 @@ try {
     }
     Write-Host "Determined FQDN: $fqdn"
 } catch {
-    Write-Error "Failed to retrieve FQDN for VM $VmName: $_"
+    Write-Error "Failed to retrieve FQDN for VM $VmName $_"
     exit 1
 }
 
