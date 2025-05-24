@@ -1,8 +1,8 @@
 # AVM Virtual Machine
 module "windows_vm" {
   for_each = local.windows_vm_instances
-  source  = "Azure/avm-res-compute-virtualmachine/azurerm"
-  version = "0.19.0"
+  source   = "Azure/avm-res-compute-virtualmachine/azurerm"
+  version  = "0.19.0"
 
   location                   = var.location
   resource_group_name        = module.resource_group.name
@@ -30,7 +30,7 @@ module "windows_vm" {
   source_image_reference = {
     publisher = "MicrosoftWindowsServer"
     offer     = "WindowsServer"
-    sku       = "2022-Datacenter-g2"
+    sku       = "2025-datacenter-azure-edition"
     version   = "latest"
   }
 
@@ -54,6 +54,9 @@ module "windows_vm" {
   priority        = each.value.priority
   max_bid_price   = var.spot_max_price
   eviction_policy = var.eviction_policy
+  
+  # Required when using Azure Edition which uses "HotPatching"
+  patch_mode = "AutomaticByPlatform"
 
   extensions = {
     script = {
@@ -62,7 +65,7 @@ module "windows_vm" {
       type                       = "CustomScriptExtension"
       type_handler_version       = "1.10"
       auto_upgrade_minor_version = true
-      settings = <<SETTINGS
+      settings                   = <<SETTINGS
       {
         "fileUris": [
           "https://raw.githubusercontent.com/shelvinx/terraform-az-infra/refs/heads/main/scripts/vm-config.ps1"
@@ -79,9 +82,9 @@ module "windows_vm" {
       auto_upgrade_minor_version = true
       settings = jsonencode({
         secretsManagementSettings = {
-          pollingIntervalInS     = "60"
-          certificateStoreName   = "My" # Standard Windows certificate store
-          linkOnRenewal          = false # Set to true if needed
+          pollingIntervalInS       = "60"
+          certificateStoreName     = "My"  # Standard Windows certificate store
+          linkOnRenewal            = false # Set to true if needed
           certificateStoreLocation = "LocalMachine"
           observedCertificates = [
             # Dynamically construct the Key Vault secret URI for the certificate

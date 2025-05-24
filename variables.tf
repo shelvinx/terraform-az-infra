@@ -57,8 +57,8 @@ variable "vm_subnet_1_address_prefix" {
 }
 
 variable "admin_password" {
-  type        = string
-  sensitive   = true
+  type      = string
+  sensitive = true
 }
 
 variable "windows_vm_sku_size" {

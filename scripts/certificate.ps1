@@ -12,7 +12,7 @@ param(
 
     [string]$WacsExePath = "C:\Program Files\win-acme\wacs.exe", # Default path, adjust if needed
 
-    [string]$ContactEmail = "your-admin-email@example.com" # Replace with actual contact
+    [string]$ContactEmail = "test@example.com" 
 )
 
 # --- Prerequisites ---

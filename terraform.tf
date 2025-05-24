@@ -8,7 +8,7 @@ terraform {
     # Required for the naming module
     random = {
       source  = "hashicorp/random"
-      version = "~> 3.7.1" 
+      version = "~> 3.7.1"
     }
   }
 
@@ -32,6 +32,6 @@ provider "azurerm" {
 }
 
 resource "random_integer" "random_zone" {
-  min   = 1
-  max   = 3
+  min = 1
+  max = 3
 }
