@@ -34,8 +34,8 @@ module "nsg_test" {
 
 module "pip_windows" {
   for_each = local.windows_vm_instances
-  source  = "Azure/avm-res-network-publicipaddress/azurerm"
-  version = "0.2.0"
+  source   = "Azure/avm-res-network-publicipaddress/azurerm"
+  version  = "0.2.0"
 
   location            = var.location
   resource_group_name = module.resource_group.name
@@ -47,8 +47,8 @@ module "pip_windows" {
 
 module "pip_linux" {
   for_each = local.linux_vm_instances
-  source  = "Azure/avm-res-network-publicipaddress/azurerm"
-  version = "0.2.0"
+  source   = "Azure/avm-res-network-publicipaddress/azurerm"
+  version  = "0.2.0"
 
   location            = var.location
   resource_group_name = module.resource_group.name

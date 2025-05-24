@@ -11,11 +11,11 @@ locals {
 
   # Define override values for Windows VMs
   windows_vm_configs = {
-    hv1 = {
-      vm_name  = "hv1"
-    #  sku_size = "Standard_D4as_v6"  # Override default SKU
-      tags     = merge(var.tags, {
-      role = "n/a"
+    ws1 = {
+      vm_name  = "ws1"
+      sku_size = "Standard_F2s_v2" # Override default SKU
+      tags = merge(var.tags, {
+        role = "none"
       })
     }
     # Add more VMs with custom configurations as needed
@@ -36,18 +36,18 @@ locals {
   # Define override values for Linux VMs
   linux_vm_configs = {
     lnx1 = {
-      vm_name  = "lnx1"
-    #  sku_size = "Standard_D2s_v3"  # Override default SKU
-      tags     = merge(var.tags, {
-        role = "webserver"
+      vm_name = "lnx1"
+      #  sku_size = "Standard_D2s_v3"  # Override default SKU
+      tags = merge(var.tags, {
+        role = "none"
       })
     }
     # Add more VMs with custom configurations as needed
     lnx2 = {
-      vm_name  = "lnx2"
-    #  sku_size = "Standard_D2s_v3"  # Override default SKU
-      tags     = merge(var.tags, {
-        role = "n/a"
+      vm_name = "lnx2"
+      #  sku_size = "Standard_D2s_v3"  # Override default SKU
+      tags = merge(var.tags, {
+        role = "none"
       })
     }
   }
