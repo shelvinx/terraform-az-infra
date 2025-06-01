@@ -39,7 +39,7 @@ locals {
       vm_name = "lnx1"
       #  sku_size = "Standard_D2s_v3"  # Override default SKU
       tags = merge(var.tags, {
-        role = "none"
+        role = "webserver"
       })
     }
     # Add more VMs with custom configurations as needed
@@ -47,7 +47,7 @@ locals {
       vm_name = "lnx2"
       #  sku_size = "Standard_D2s_v3"  # Override default SKU
       tags = merge(var.tags, {
-        role = "none"
+        role = "webserver"
       })
     }
   }
