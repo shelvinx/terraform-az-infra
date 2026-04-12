@@ -2,7 +2,7 @@
 module "linux_vm" {
   for_each = local.linux_vm_instances
   source   = "Azure/avm-res-compute-virtualmachine/azurerm"
-  version  = "0.19.0"
+  version  = "0.20.0"
 
   location                   = var.location
   resource_group_name        = module.resource_group.name
@@ -15,7 +15,7 @@ module "linux_vm" {
   account_credentials = {
     admin_credentials = {
       username                           = "azureuser"
-      password                           = var.admin_password # To be updated: SSH KEY
+      password                           = data.azurerm_key_vault_secret.azure_admin_password.value
       generate_admin_password_or_ssh_key = false
     }
     password_authentication_disabled = false

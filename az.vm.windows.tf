@@ -2,7 +2,7 @@
 module "windows_vm" {
   for_each = local.windows_vm_instances
   source   = "Azure/avm-res-compute-virtualmachine/azurerm"
-  version  = "0.19.0"
+  version  = "0.20.0"
 
   location                   = var.location
   resource_group_name        = module.resource_group.name
@@ -15,7 +15,7 @@ module "windows_vm" {
   account_credentials = {
     admin_credentials = {
       username                           = "azureuser"
-      password                           = var.admin_password
+      password                           = data.azurerm_key_vault_secret.azure_admin_password.value
       generate_admin_password_or_ssh_key = false
     }
   }
@@ -30,7 +30,7 @@ module "windows_vm" {
   source_image_reference = {
     publisher = "MicrosoftWindowsServer"
     offer     = "WindowsServer"
-    sku       = "2025-datacenter-azure-edition"
+    sku       = "2025-datacenter-g2"
     version   = "latest"
   }
 
@@ -54,9 +54,9 @@ module "windows_vm" {
   priority        = each.value.priority
   max_bid_price   = var.spot_max_price
   eviction_policy = var.eviction_policy
-  
+
   # Required when using Azure Edition which uses "HotPatching"
-  patch_mode = "AutomaticByPlatform"
+  patch_mode = var.patch_mode
 
   extensions = {
     script = {
@@ -68,7 +68,7 @@ module "windows_vm" {
       settings                   = <<SETTINGS
       {
         "fileUris": [
-          "https://raw.githubusercontent.com/shelvinx/terraform-az-infra/refs/heads/main/scripts/vm-config.ps1"
+          "https://raw.githubusercontent.com/${var.github_username}/terraform-az-infra/refs/heads/main/scripts/vm-config.ps1"
         ],
         "commandToExecute": "powershell -ExecutionPolicy Unrestricted -File vm-config.ps1"
       }
@@ -103,4 +103,71 @@ module "windows_vm" {
   }
 
   tags = each.value.tags
+}
+
+resource "terraform_data" "trigger_ansible" {
+  # This tells Terraform to always trigger this block on every successful run
+  triggers_replace = [
+    timestamp()
+  ]
+
+  # This ensures Terraform waits until ALL VMs in the module are fully created
+  depends_on = [
+    module.windows_vm,
+    # You can also add your linux VM module here if you have one:
+    # module.linux_vm 
+  ]
+
+  provisioner "local-exec" {
+    interpreter = ["PowerShell", "-Command"]
+    command     = <<EOT
+      Write-Host "Triggering Ansible workflow in GitHub..."
+      gh workflow run ansible-runner.yml --repo ${var.github_username}/${var.ansible_repo_name} --ref main
+      
+      Write-Host "Waiting for GitHub to register the run..."
+      Start-Sleep -Seconds 5
+      
+      # Fetch the latest Run ID
+      $runJson = gh run list --repo ${var.github_username}/${var.ansible_repo_name} --workflow ansible-runner.yml --limit 1 --json databaseId
+      $runId = ($runJson | ConvertFrom-Json)[0].databaseId
+      
+      Write-Host "Watching GitHub Run ID: $runId"
+      
+      # Dynamic step-by-step polling loop
+      $status = "in_progress"
+      $completedSteps = @()
+      
+      while ($status -eq "in_progress" -or $status -eq "queued" -or $status -eq "waiting" -or $status -eq "requested") {
+          Start-Sleep -Seconds 5
+          # Fetch the full job data including individual steps
+          $runInfo = gh run view $runId --repo ${var.github_username}/${var.ansible_repo_name} --json status,conclusion,jobs | ConvertFrom-Json
+          $status = $runInfo.status
+          
+          # If the job has started, iterate through its steps
+          if ($runInfo.jobs -and $runInfo.jobs.Count -gt 0) {
+              foreach ($step in $runInfo.jobs[0].steps) {
+                  # If a step is done, and we haven't printed it yet, print it!
+                  if ($step.status -eq "completed" -and $completedSteps -notcontains $step.name) {
+                      # Emulate the gh interface, but printing linearly line-by-line
+                      if ($step.conclusion -eq "success") {
+                          Write-Host "  ✓ $($step.name)"
+                      } elseif ($step.conclusion -eq "skipped") {
+                          Write-Host "  - $($step.name) (skipped)"
+                      } else {
+                          Write-Host "  X $($step.name) (failed)"
+                      }
+                      $completedSteps += $step.name
+                  }
+              }
+          }
+      }
+      
+      if ($runInfo.conclusion -ne "success") {
+          Write-Error "Ansible workflow failed with conclusion: $($runInfo.conclusion)"
+          exit 1
+      }
+      
+      Write-Host "Ansible workflow completed successfully!"
+    EOT
+  }
 }

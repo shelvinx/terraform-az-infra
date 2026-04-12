@@ -13,7 +13,7 @@ locals {
   windows_vm_configs = {
     ws1 = {
       vm_name  = "ws1"
-      sku_size = "Standard_F2s_v2" # Override default SKU
+      sku_size = "Standard_B2as_v2" # Override default SKU
       tags = merge(var.tags, {
         role = "none"
       })
@@ -36,18 +36,10 @@ locals {
   # Define override values for Linux VMs
   linux_vm_configs = {
     lnx1 = {
-      vm_name = "lnx1"
-      #  sku_size = "Standard_D2s_v3"  # Override default SKU
+      vm_name  = "lnx1"
+      sku_size = "Standard_D2als_v6" # Override default SKU
       tags = merge(var.tags, {
-        role = "webserver"
-      })
-    }
-    # Add more VMs with custom configurations as needed
-    lnx2 = {
-      vm_name = "lnx2"
-      #  sku_size = "Standard_D2s_v3"  # Override default SKU
-      tags = merge(var.tags, {
-        role = "webserver"
+        role = "az-devops-agent"
       })
     }
   }
@@ -69,7 +61,7 @@ locals {
       direction                  = "Inbound"
       priority                   = 1000
       protocol                   = "Tcp"
-      source_address_prefix      = "*"
+      source_address_prefix      = "${chomp(data.http.deployer_ip.response_body)}/32"
       source_port_range          = "*"
     }
     "allowicmp" = {
@@ -102,7 +94,7 @@ locals {
       direction                  = "Inbound"
       priority                   = 1003
       protocol                   = "Tcp"
-      source_address_prefix      = "*"
+      source_address_prefix      = "${chomp(data.http.deployer_ip.response_body)}/32"
       source_port_range          = "*"
     }
     "allowhttp" = {

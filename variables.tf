@@ -1,15 +1,3 @@
-variable "HCP_CLIENT_ID" {
-  description = "HCP Client ID"
-  type        = string
-  sensitive   = true
-}
-
-variable "HCP_CLIENT_SECRET" {
-  description = "HCP Client Secret"
-  type        = string
-  sensitive   = true
-}
-
 variable "key_vault_name" {
   description = "Key Vault name"
   type        = string
@@ -56,11 +44,6 @@ variable "vm_subnet_1_address_prefix" {
   }
 }
 
-variable "admin_password" {
-  type      = string
-  sensitive = true
-}
-
 variable "windows_vm_sku_size" {
   description = "SKU size for the VM"
   type        = string
@@ -104,4 +87,29 @@ variable "windows_vm_count" {
 variable "linux_vm_count" {
   description = "Number of Linux VM instances to create."
   type        = number
+}
+
+variable "patch_mode" {
+  description = "Patch mode for the VM"
+  type        = string
+
+  validation {
+    condition     = contains(["AutomaticByPlatform", "AutomaticByOS"], var.patch_mode)
+    error_message = "The patch mode must be either 'AutomaticByPlatform' or 'AutomaticByOS'."
+  }
+}
+
+variable "github_username" {
+  description = "GitHub username or organization containing the ansible playbook repo"
+  type        = string
+}
+
+variable "ansible_repo_name" {
+  description = "Name of the Ansible playbook repository on GitHub"
+  type        = string
+}
+
+variable "key_vault_rg" {
+  description = "Resource group name where the Key Vault resides"
+  type        = string
 }

@@ -26,6 +26,6 @@ Built with [Azure Verified Modules](https://azure.github.io/Azure-Verified-Modul
   - Outputs for VM names and IPs use `merge()` to combine Windows and Linux resources into a single map.
 
 ## ENVIRONMENT VARIABLES
-- `ADMIN_PASSWORD` (HCP Vault - Set as TF_VAR ENV Variable, this removes the undeclared variable warning.)
+- `ADMIN_PASSWORD` (Stored in KV and GitHub Environment)
 
 ---
