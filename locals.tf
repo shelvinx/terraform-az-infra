@@ -11,14 +11,14 @@ locals {
 
   # Define override values for Windows VMs
   windows_vm_configs = {
+    # Add more VMs with custom configurations as needed
     ws1 = {
-      vm_name  = "ws1"
-      sku_size = "Standard_B2as_v2" # Override default SKU
+      vm_name = "ws1"
+      # sku_size = "Standard_D2als_v6"
       tags = merge(var.tags, {
         role = "none"
       })
     }
-    # Add more VMs with custom configurations as needed
   }
 
   # Merge defaults with specific configurations, selecting based on count

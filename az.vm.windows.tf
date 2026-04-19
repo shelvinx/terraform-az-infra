@@ -108,7 +108,8 @@ module "windows_vm" {
 resource "terraform_data" "trigger_ansible" {
   # This tells Terraform to always trigger this block on every successful run
   triggers_replace = [
-    timestamp()
+    timestamp(),
+    filemd5("${path.module}/scripts/trigger-ansible.ps1")
   ]
 
   # This ensures Terraform waits until ALL VMs in the module are fully created
@@ -120,54 +121,6 @@ resource "terraform_data" "trigger_ansible" {
 
   provisioner "local-exec" {
     interpreter = ["PowerShell", "-Command"]
-    command     = <<EOT
-      Write-Host "Triggering Ansible workflow in GitHub..."
-      gh workflow run ansible-runner.yml --repo ${var.github_username}/${var.ansible_repo_name} --ref main
-      
-      Write-Host "Waiting for GitHub to register the run..."
-      Start-Sleep -Seconds 5
-      
-      # Fetch the latest Run ID
-      $runJson = gh run list --repo ${var.github_username}/${var.ansible_repo_name} --workflow ansible-runner.yml --limit 1 --json databaseId
-      $runId = ($runJson | ConvertFrom-Json)[0].databaseId
-      
-      Write-Host "Watching GitHub Run ID: $runId"
-      
-      # Dynamic step-by-step polling loop
-      $status = "in_progress"
-      $completedSteps = @()
-      
-      while ($status -eq "in_progress" -or $status -eq "queued" -or $status -eq "waiting" -or $status -eq "requested") {
-          Start-Sleep -Seconds 5
-          # Fetch the full job data including individual steps
-          $runInfo = gh run view $runId --repo ${var.github_username}/${var.ansible_repo_name} --json status,conclusion,jobs | ConvertFrom-Json
-          $status = $runInfo.status
-          
-          # If the job has started, iterate through its steps
-          if ($runInfo.jobs -and $runInfo.jobs.Count -gt 0) {
-              foreach ($step in $runInfo.jobs[0].steps) {
-                  # If a step is done, and we haven't printed it yet, print it!
-                  if ($step.status -eq "completed" -and $completedSteps -notcontains $step.name) {
-                      # Emulate the gh interface, but printing linearly line-by-line
-                      if ($step.conclusion -eq "success") {
-                          Write-Host "  ✓ $($step.name)"
-                      } elseif ($step.conclusion -eq "skipped") {
-                          Write-Host "  - $($step.name) (skipped)"
-                      } else {
-                          Write-Host "  X $($step.name) (failed)"
-                      }
-                      $completedSteps += $step.name
-                  }
-              }
-          }
-      }
-      
-      if ($runInfo.conclusion -ne "success") {
-          Write-Error "Ansible workflow failed with conclusion: $($runInfo.conclusion)"
-          exit 1
-      }
-      
-      Write-Host "Ansible workflow completed successfully!"
-    EOT
+    command     = "& '${path.module}/scripts/trigger-ansible.ps1' -GithubUsername '${var.github_username}' -AnsibleRepoName '${var.ansible_repo_name}'"
   }
 }
