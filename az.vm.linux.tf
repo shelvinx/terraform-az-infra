@@ -1,50 +1,45 @@
-# AVM Linux Virtual Machine
-module "linux_vm" {
+resource "azurerm_network_interface" "linux_nic" {
   for_each = local.linux_vm_instances
-  source   = "Azure/avm-res-compute-virtualmachine/azurerm"
-  version  = "0.20.0"
 
-  location                   = var.location
-  resource_group_name        = module.resource_group.name
-  name                       = "${module.naming.virtual_machine.name}-${each.value.vm_name}"
-  os_type                    = "Linux"
-  sku_size                   = each.value.sku_size
-  zone                       = null
-  encryption_at_host_enabled = false
+  name                = "${module.naming.network_interface.name}-${each.key}"
+  location            = var.location
+  resource_group_name = module.resource_group.name
 
-  account_credentials = {
-    admin_credentials = {
-      username                           = "azureuser"
-      password                           = data.azurerm_key_vault_secret.azure_admin_password.value
-      generate_admin_password_or_ssh_key = false
-    }
-    password_authentication_disabled = false
+  ip_configuration {
+    name                          = "ipconfig-${each.key}"
+    subnet_id                     = module.vnet_test.subnets.vm_subnet_1.resource_id
+    private_ip_address_allocation = "Dynamic"
+    public_ip_address_id          = module.pip_linux[each.key].resource_id
   }
+}
 
-  os_disk = {
+resource "azurerm_linux_virtual_machine" "linux_vm" {
+  for_each = local.linux_vm_instances
+
+  name                            = "${module.naming.virtual_machine.name}-${each.value.vm_name}"
+  resource_group_name             = module.resource_group.name
+  location                        = var.location
+  size                            = each.value.sku_size
+  admin_username                  = "azureuser"
+  admin_password                  = data.azurerm_key_vault_secret.azure_admin_password.value
+  disable_password_authentication = false
+  encryption_at_host_enabled      = false
+
+  network_interface_ids = [
+    azurerm_network_interface.linux_nic[each.key].id,
+  ]
+
+  os_disk {
     name                 = "${module.naming.managed_disk.name}-${each.key}-osdisk"
     caching              = "ReadWrite"
     storage_account_type = "StandardSSD_LRS"
   }
 
-  source_image_reference = {
+  source_image_reference {
     publisher = "Canonical"
     offer     = "ubuntu-24_04-lts"
     sku       = "server"
     version   = "latest"
-  }
-
-  network_interfaces = {
-    network_interface_1 = {
-      name = "${module.naming.network_interface.name}-${each.key}"
-      ip_configurations = {
-        ip_configurations_1 = {
-          name                          = "ipconfig-${each.key}"
-          private_ip_subnet_resource_id = module.vnet_test.subnets.vm_subnet_1.resource_id
-          public_ip_address_resource_id = module.pip_linux[each.key].resource_id
-        }
-      }
-    }
   }
 
   priority        = each.value.priority
@@ -57,7 +52,7 @@ module "linux_vm" {
 resource "azurerm_virtual_machine_extension" "nginx" {
   for_each = local.linux_vm_instances
 
-  virtual_machine_id = module.linux_vm[each.key].resource_id
+  virtual_machine_id = azurerm_linux_virtual_machine.linux_vm[each.key].id
 
   name                 = "nginx"
   publisher            = "Microsoft.Azure.Extensions"

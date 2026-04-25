@@ -9,8 +9,8 @@ output "public_ip_addresses" {
 output "virtual_machine_names" {
   description = "Output VM names for all instances"
   value = merge(
-    { for k, v in module.windows_vm : k => v.name },
-    { for k, v in module.linux_vm : k => v.name }
+    { for k, v in azurerm_windows_virtual_machine.windows_vm : k => v.name },
+    { for k, v in azurerm_linux_virtual_machine.linux_vm : k => v.name }
   )
 }
 
