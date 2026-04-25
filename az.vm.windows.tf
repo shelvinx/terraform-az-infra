@@ -59,8 +59,8 @@ module "windows_vm" {
   patch_mode = var.patch_mode
 
   extensions = {
-    script = {
-      name                       = "ConfigurationScript"
+    ansible_preconfig = {
+      name                       = "AnsiblePreConfiguration"
       publisher                  = "Microsoft.Compute"
       type                       = "CustomScriptExtension"
       type_handler_version       = "1.10"
@@ -75,10 +75,10 @@ module "windows_vm" {
       SETTINGS
     }
     keyvault = {
-      name                       = "KeyVaultForWindows-${each.key}" # Unique name per VM
+      name                       = "KeyVaultForWindows"
       publisher                  = "Microsoft.Azure.KeyVault"
       type                       = "KeyVaultForWindows"
-      type_handler_version       = "3.0" # Using a common version
+      type_handler_version       = "4.0"
       auto_upgrade_minor_version = true
       settings = jsonencode({
         secretsManagementSettings = {
